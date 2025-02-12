@@ -21,7 +21,17 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'direccion_envio',
+        'ciudad',
+        'pais',
+        'tlf',
+        'metodo_pago',
+        'admin'
     ];
+    public function ventas()
+    {
+        return $this->hasMany(Venta::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
