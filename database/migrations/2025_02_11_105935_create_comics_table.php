@@ -10,14 +10,11 @@ return new class extends Migration {
         Schema::create('comics', function (Blueprint $table) {
             $table->id();
             $table->string('isbn')->unique();
-            $table->string('genero');
-            $table->year('anio');
             $table->string('titulo');
-            $table->decimal('precio', 8, 2);
-            $table->text('descripcion')->nullable();
-            $table->integer('stock')->default(0);
-            $table->foreignId('users_id')->constrained();
-            $table->foreignId('ventas_id')->constrained();
+            $table->integer('precio');
+            $table->integer('stock')->default(0); // Inicialmente 0
+            $table->timestamps();
+            // venta id y user id
         });
     }
 

@@ -16,7 +16,29 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+      // Solo un admin puede acceder
+      if (!Auth::check() || !Auth::user()->admin) {
+        return redirect('/')->with('error', 'No tienes permisos de administrador.');
+    }
+
+    // Obtener todos los usuarios menos el admin actual
+    $users = User::where('id', '!=', Auth::id())->get();
+
+    return view('user.index', compact('users'));
+    }
+    public function toggleAdmin($id)
+    {
+        // Solo un admin puede modificar roles
+        if (!Auth::check() || !Auth::user()->admin) {
+            return redirect('/')->with('error', 'No tienes permisos de administrador.');
+        }
+
+        // Encontrar usuario y cambiar su rol
+        $user = User::findOrFail($id);
+        $user->admin = !$user->admin; // Cambia de admin a no admin y viceversa
+        $user->save();
+
+        return redirect()->route('user.index')->with('success', 'Rol de usuario actualizado.');
     }
     
 
@@ -68,7 +90,10 @@ class UserController extends Controller
             'tlf' => $request->tlf,
             'metodo_pago' => $request->metodo_pago,
         ]);
+        if (Auth::attempt($credentials)) {
         return redirect()->route('login')->with('success', value: "Inicia sesión por primera vez:)");
+        }
+        
     }
 
     /**
@@ -111,7 +136,7 @@ class UserController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->route('comic.index')->with('success', 'Inicio de sesión exitoso.');
+            return redirect()->route('comics.index')->with('success', 'Inicio de sesión exitoso.');
         }
 
         return back()->withErrors(['email' => 'Las credenciales proporcionadas no son correctas.']);
@@ -125,4 +150,6 @@ class UserController extends Controller
 
         return redirect('/login')->with('success', 'Cierre de sesión exitoso.');
     }
+
+    
 }
