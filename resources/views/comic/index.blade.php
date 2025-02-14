@@ -28,14 +28,18 @@
                             <p class="card-text"><strong>Autores:</strong> {{ $comic->autores }}</p>
                             <p class="card-text text-success fs-5"><strong>{{ number_format($comic->precio, 2) }} €</strong></p>
                             <p class="card-text"><strong>Stock:</strong> {{ $comic->stock }} unidades</p>
+                         
                         </div>
                         <div class="card-footer bg-white text-center">
-                            <button class="btn btn-success ">🛒 Comprar</button>
+                            <form action="{{ route('cart.add', $comic->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-primary">Añadir al carrito</button>
+                            </form>
                                 @if(Auth::check() && Auth::user()->admin)
                                     <form action="{{ route('comics.delete', $comic->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                                        <button type="submit" class="btn btn-danger" style="margin-top:5px;">Eliminar</button>
                                     </form>
                                 @endif
                         </div>

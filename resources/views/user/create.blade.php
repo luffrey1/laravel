@@ -39,11 +39,13 @@
                     <span class="h1 fw-bold mb-0">Comics</span>
                   </div>
 
+  
+
                   <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
 
                   <div data-mdb-input-init class="form-outline mb-4">
                   <label class="form-label">Nombre:</label>
-                    <input type="text" name="nombre"  placeholder="Introduzca su nombre"class="form-control form-control-lg" />
+                    <input type="text" name="name"  placeholder="Introduzca su nombre"class="form-control form-control-lg" />
                     
                   </div>
                   <div data-mdb-input-init class="form-outline mb-4">

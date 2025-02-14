@@ -62,39 +62,44 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'=>'required|min:3|unique:users,name',
-             'email' => 'required|unique:users,email|email',
+            'name' => 'required|min:3|unique:users,name',
+            'email' => 'required|unique:users,email|email',
             'password' => [
-            'required',
-            'min:8',
-            'confirmed',
-            Password::min(8) // Sin barra invertida
-                ->letters()
-                ->mixedCase()
-                ->numbers()
-                ->symbols()
-                    ],
-            'direccion_envio'=>'',
-            'ciudad'=>'',
-            'pais'=>'',
-            'tlf'=>'',
-            'metodo_pago'=> ''
+                'required',
+                'min:8',
+                'confirmed',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+            ],
+            'direccion_envio' => 'nullable|string',
+            'tlf' => 'nullable|string',
+            'metodo_pago' => 'nullable|string',
         ]);
-        User::create([
+    
+        // Obtener ubicación del usuario
+        $location = $this->getUserLocation();
+    
+        // Crear usuario con los datos de geolocalización
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password), // Hashear la contraseña
             'direccion_envio' => $request->direccion_envio,
-            'ciudad' => $request->ciudad,
-            'pais' => $request->pais,
+            'ciudad' => $location['ciudad'],  // Se obtiene de la API
+            'pais' => $location['pais'],  // Se obtiene de la API
+            'moneda' => $location['moneda'],
             'tlf' => $request->tlf,
             'metodo_pago' => $request->metodo_pago,
         ]);
-        if (Auth::attempt($credentials)) {
-        return redirect()->route('login')->with('success', value: "Inicia sesión por primera vez:)");
-        }
-        
+    
+        Auth::login($user);
+    
+        return redirect()->route('user.login')->with('success', 'Registro exitoso. Ubicación guardada.');
     }
+    
 
     /**
      * Display the specified resource.
@@ -147,9 +152,37 @@ class UserController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        return redirect('/login')->with('success', 'Cierre de sesión exitoso.');
+        
+        return redirect('/comics')->with('success', 'Sesión cerrada correctamente.');
     }
+    public function getUserLocation()
+    {
+       // $ip = request()->ip(); // Obtener la IP del usuario
+       $ip = '8.8.8.8';
+
+        $apiKey = env('IPGEOLOCATION_API_KEY'); // API Key del .env
+        $url = "https://api.ipgeolocation.io/ipgeo?apiKey=$apiKey&ip=$ip";
+    
+        try {
+            $response = file_get_contents($url);
+            $data = json_decode($response, true);
+    
+            return [
+                'pais' => $data['country_name'] ?? 'Desconocido',
+                'ciudad' => $data['country_capital'] ?? 'Desconocido',
+                'moneda' => $data['currency']['name'] ?? 'EUR'
+            ];
+        } catch (\Exception $e) {
+            return [
+                'pais' => 'Desconocido',
+                'ciudad' => 'Desconocido',
+                'moneda' => 'EUR'
+            ];
+        }
+    }
+    
+
+    
 
     
 }

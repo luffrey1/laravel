@@ -26,7 +26,8 @@ class User extends Authenticatable
         'pais',
         'tlf',
         'metodo_pago',
-        'admin'
+        'admin',
+        'moneda'
     ];
     public function ventas()
     {

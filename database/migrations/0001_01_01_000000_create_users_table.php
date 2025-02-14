@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('direccion_envio')->nullable();
             $table->string('ciudad')->nullable();
             $table->string('pais')->nullable();
+            $table->string('moneda')->nullable();
             $table->string('tlf')->nullable();
             $table->string('metodo_pago')->nullable();
             $table->boolean('admin')->default(false);
