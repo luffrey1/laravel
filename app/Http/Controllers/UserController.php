@@ -158,7 +158,7 @@ class UserController extends Controller
     public function getUserLocation()
     {
        // $ip = request()->ip(); // Obtener la IP del usuario
-       $ip = '8.8.8.8';
+       $ip = '8.8.8.8'; // aqui pones ip personalizada porque utiliza la de localhost y no es valida
 
         $apiKey = env('IPGEOLOCATION_API_KEY'); // API Key del .env
         $url = "https://api.ipgeolocation.io/ipgeo?apiKey=$apiKey&ip=$ip";

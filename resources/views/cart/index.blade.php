@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
 <body>
-@include('header');
+@include('header')
 <table class="table table-striped">
     <thead>
         <tr>
@@ -34,7 +34,19 @@
                         <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                     </form>
                 </td>
+
             </tr>
+            <tr>
+                <td>
+                    <form action="" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-warning btn-sm">Pagar Articulos</button>
+                    </form>
+                </td>
+            </tr>
+
+
+
         @endforeach
     </tbody>
 </table>
