@@ -10,7 +10,6 @@
 <body>
 @include('header')
 <div class="container mt-5">
-    <h1 class="text-center mb-4">📚 Tienda de Cómics</h1>
 
     @if($comics->isEmpty())
         <div class="alert alert-warning text-center">

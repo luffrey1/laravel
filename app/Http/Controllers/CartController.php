@@ -72,11 +72,37 @@ class CartController extends Controller
 
     // Pagar el carrito
 
+    public function checkout(){
+
+        $cart = session()->get('cart', []);
+        // Recorremos cada libro en el carrito
+        foreach ($cart as $id => $item) {
+            $comic = Comic::where('isbn', $item['isbn'])->first(); // Buscar libro por ISBN
+
+            if ($comic) {
+                // Verificar si hay suficiente stock
+                if ($comic->stock >= $item['quantity']) {
+                    $comic->stock -= $item['quantity']; // Restar stock
+                    $comic->save(); // Guardar cambios
+                } else {
+                    return redirect()->route('cart.index')->with('error', "No hay suficiente stock de '{$item['name']}'.");
+                }
+            }
+        }
+
+        session()->forget('cart');
+
+        return redirect()->route('cart.success')->with('success', 'Compra realizada con éxito.');
+
+    }
+
+
     // Página de éxito
     public function success()
     {
-        session()->forget('cart');
+
         return view('cart.success');
+    
     }
 
     // Método para obtener la ubicación del usuario (API Geolocation)
