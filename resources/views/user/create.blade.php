@@ -27,7 +27,7 @@
           <div class="row g-0">
             <div class="col-md-6 col-lg-5 d-none d-md-block">
               <img src="https://i1.whakoom.com/large/04/3b/5020ae18cd7449efb368b1201bfca38e.jpg"
-                alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem; height:740px" />
+                alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem; height:760px" />
             </div>
             <div class="col-md-6 col-lg-7 d-flex align-items-center">
               <div class="card-body p-4 p-lg-5 text-black">
@@ -41,7 +41,7 @@
 
   
 
-                  <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
+                  <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign up</h5>
 
                   <div data-mdb-input-init class="form-outline mb-4">
                   <label class="form-label">Nombre:</label>
@@ -66,9 +66,10 @@
                   </div>
 
                   <div class="pt-1 mb-4">
-                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block" type="submit">Register</button>
                   </div>
-
+                  <div class="" style="color: #393f81;">Do you have an account? <a href="/user/login"
+                  style="color: #393f81;">Login here</a></div>
 
                   <a href="#!" class="small text-muted">Terms of use.</a>
                   <a href="#!" class="small text-muted">Privacy policy</a>

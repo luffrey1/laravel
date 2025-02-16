@@ -97,7 +97,7 @@ class UserController extends Controller
     
         Auth::login($user);
     
-        return redirect()->route('user.login')->with('success', 'Registro exitoso. Ubicación guardada.');
+        return redirect()->route('login')->with('success', 'Registro exitoso. Ubicación guardada.');
     }
     
 

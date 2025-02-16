@@ -49,9 +49,10 @@ class CartController extends Controller
        // Guardar el carrito actualizado en la sesión
        session()->put('cart', $cart);
    
-       // Redirigir al carrito
-       return redirect()->route('cart.index')->with('success', 'Cómic añadido al carrito.');
+       // Redirigir al usuario a la página anterior y mostrar un mensaje
+       return redirect()->back()->with('success', 'Cómic añadido al carrito.');
    }
+   
    
 
 
@@ -66,53 +67,10 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
-        return redirect()->route('cart.index');
+        return ( 'Cómic retirado del carrito.');
     }
 
-    // Pagar
-    public function checkout(Request $request)
-    {
-        // Verificar la ubicación del usuario (utiliza la API de geolocalización o lo que necesites)
-        $location = $this->getUserLocation(); // Este método llamaría a tu API
-
-        // Calcular el costo de envío según la ubicación
-        $shippingCost = $this->calculateShipping($location);
-
-        // Calcular el total
-        $cart = session()->get('cart', []);
-        $total = array_reduce($cart, function ($carry, $item) {
-            return $carry + ($item['price'] * $item['quantity']);
-        }, 0);
-
-        $total += $shippingCost; // Añadir costo de envío
-
-        // Crear una sesión de Stripe para el pago
-        Stripe::setApiKey(env('STRIPE_SECRET'));
-
-        $checkoutSession = StripeSession::create([
-            'payment_method_types' => ['card'],
-            'line_items' => array_map(function ($item) {
-                return [
-                    'price_data' => [
-                        'currency' => 'usd',
-                        'product_data' => [
-                            'name' => $item['name'],
-                        ],
-                        'unit_amount' => $item['price'] * 100,
-                    ],
-                    'quantity' => $item['quantity'],
-                ];
-            }, $cart),
-            'shipping_address_collection' => [
-                'allowed_countries' => ['US'],
-            ],
-            'mode' => 'payment',
-            'success_url' => route('cart.success'),
-            'cancel_url' => route('cart.index'),
-        ]);
-
-        return redirect()->away($checkoutSession->url);
-    }
+    // Pagar el carrito
 
     // Página de éxito
     public function success()
@@ -130,12 +88,5 @@ class CartController extends Controller
         $url = "https://api.ipgeolocation.io/ipgeo?apiKey=$apiKey&ip=$ip";
         $response = file_get_contents($url);
         return json_decode($response, true);
-    }
-
-    // Método para calcular el coste de envío
-    private function calculateShipping($location)
-    {
-        // Aquí iría el cálculo del coste según la ubicación (usando alguna API de envíos)
-        return 10; // Ejemplo de coste fijo para el envío
     }
 }

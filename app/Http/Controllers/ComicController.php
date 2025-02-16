@@ -19,7 +19,9 @@ class ComicController extends Controller
             $isbn = $comic->isbn;
             $apiUrl = "https://openlibrary.org/api/books?bibkeys=ISBN:$isbn&format=json&jscmd=data";
             
-            $response = Http::get($apiUrl);
+            $response = Http::withOptions([
+                'verify' => false,  // Esto en windows me daba error de seguridad por el ssl asi que se desactiva
+            ])->get($apiUrl);
             $data = $response->json();
     
             if (isset($data["ISBN:$isbn"])) {
@@ -79,7 +81,9 @@ class ComicController extends Controller
 
         // Si no existe, obtener el título desde la API
         $apiUrl = "https://openlibrary.org/api/books?bibkeys=ISBN:{$isbn}&format=json&jscmd=data";
-        $response = Http::get($apiUrl);
+        $response = Http::withOptions([
+            'verify' => false,  // Esto en windows me daba error de seguridad por el ssl asi que se desactiva
+        ])->get($apiUrl);
         $data = $response->json();
 
         if (!isset($data["ISBN:$isbn"])) {
