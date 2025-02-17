@@ -10,7 +10,8 @@ class Venta extends Model
 
     public function comics()
     {
-        return $this->belongsToMany(Comic::class, 'comic_venta');
+        return $this->belongsToMany(Comic::class, 'venta_comic', 'venta_id', 'comic_id')
+                    ->withPivot('quantity');  // Relación muchos a muchos con cantidad
     }
 
     public function users()

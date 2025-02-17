@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->integer('precio');
             $table->integer('stock')->default(0); // Inicialmente 0
             $table->timestamps();
-            // venta id y user id
+            
         });
     }
 

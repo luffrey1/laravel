@@ -10,10 +10,8 @@ return new class extends Migration {
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
             $table->date('fecha');
-            $table->string('direccion_envio');
-            $table->string('estado_envio')->default('pendiente');
-            $table->string('metodo_pago');
-           
+           // $table->string('metodo_pago');
+            $table->timestamps();
         });
     }
 

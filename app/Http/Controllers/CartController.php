@@ -1,9 +1,12 @@
 <?php 
 // CartController.php
 namespace App\Http\Controllers;
-
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Comic;
+use App\Models\Venta;
+use Illuminate\Support\Facades\Auth;
+
 use Session;
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
@@ -72,37 +75,46 @@ class CartController extends Controller
 
     // Pagar el carrito
 
-    public function checkout(){
+    public function checkout()
+{
+    $cart = session()->get('cart', []);
 
-        $cart = session()->get('cart', []);
-        // Recorremos cada libro en el carrito
-        foreach ($cart as $id => $item) {
-            $comic = Comic::where('isbn', $item['isbn'])->first(); // Buscar libro por ISBN
+    // Crear la venta
+    $venta = Venta::create([
+        'user_id' => Auth::id(),  // Asociar al usuario que está realizando la compra
+        'fecha' => Carbon::now(),  // Establecer la fecha y hora actuales
+    ]);
 
-            if ($comic) {
-                // Verificar si hay suficiente stock
-                if ($comic->stock >= $item['quantity']) {
-                    $comic->stock -= $item['quantity']; // Restar stock
-                    $comic->save(); // Guardar cambios
-                } else {
-                    return redirect()->route('cart.index')->with('error', "No hay suficiente stock de '{$item['name']}'.");
-                }
+    // Recorremos cada cómic en el carrito
+    foreach ($cart as $id => $item) {
+        $comic = Comic::where('isbn', $item['isbn'])->first(); // Buscar cómic por ISBN
+
+        if ($comic) {
+            // Verificar si hay suficiente stock
+            if ($comic->stock >= $item['quantity']) {
+                $comic->stock -= $item['quantity'];  // Restar stock
+                $comic->save();  // Guardar cambios
+
+                // Crear la relación entre la venta y el cómic (tabla intermedia)
+                $venta->comics()->attach($comic->id, [
+                    'cantidad' => $item['quantity'],  // Guardar la cantidad comprada
+                ]);
+            } else {
+                return redirect()->route('cart.index')->with('error', "No hay suficiente stock de '{$item['name']}'.");
             }
         }
-
-        session()->forget('cart');
-
-        return redirect()->route('cart.success')->with('success', 'Compra realizada con éxito.');
-
     }
 
+    // Vaciar el carrito
+    session()->forget('cart');
 
+    return redirect()->route('cart.success')->with('success', 'Compra realizada con éxito.');
+}
+    
     // Página de éxito
     public function success()
     {
-
         return view('cart.success');
-    
     }
 
     // Método para obtener la ubicación del usuario (API Geolocation)

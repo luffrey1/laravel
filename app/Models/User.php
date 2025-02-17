@@ -56,4 +56,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function comics()
+    {
+        return $this->belongsToMany(Comic::class, 'venta_comic')->withPivot('cantidad')->withTimestamps();
+    }
 }

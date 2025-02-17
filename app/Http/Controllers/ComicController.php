@@ -65,6 +65,7 @@ class ComicController extends Controller
             'isbn'=>'required|string|min:3', 
             'precio'=>'required|numeric|min:1',
             'stock'=> 'required|integer|min:1',
+            
         ]);
         $isbn = $request->input('isbn');
         $stock = $request->input('stock');
