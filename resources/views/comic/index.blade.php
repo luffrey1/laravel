@@ -16,6 +16,11 @@
             No hay cómics registrados en la base de datos.
         </div>
     @else
+    @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
         <div class="row row-cols-1 row-cols-md-3 g-4">
             @foreach($comics as $comic)
                 <div class="col">

@@ -21,6 +21,7 @@
         </ul>
     </div>
 @endif
+
         </div>
       <div class="col col-xl-10">
         <div class="card" style="border-radius: 1rem;">
