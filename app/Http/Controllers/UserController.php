@@ -91,8 +91,6 @@ class UserController extends Controller
             'ciudad' => $location['ciudad'],  // Se obtiene de la API
             'pais' => $location['pais'],  // Se obtiene de la API
             'moneda' => $location['moneda'],
-            'tlf' => $request->tlf,
-            'metodo_pago' => $request->metodo_pago,
         ]);
     
         Auth::login($user);

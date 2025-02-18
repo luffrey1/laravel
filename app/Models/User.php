@@ -21,11 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'direccion_envio',
         'ciudad',
         'pais',
-        'tlf',
-        'metodo_pago',
         'admin',
         'moneda'
     ];

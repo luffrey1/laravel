@@ -8,10 +8,6 @@ use App\Http\Controllers\ComicController;
 
 //Para que se muestre la pagina de index nada mas entrar a la ip.
 Route::get('/', [ComicController::class, 'index']);
-
-
-
-
 // para registrarte
 Route::get('user/register', [UserController::class, 'create'])->name('register');
 Route::post('user/register', [UserController::class, 'store'])->name('register.store');
