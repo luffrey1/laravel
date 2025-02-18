@@ -6,10 +6,13 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Comic;
+
 class ComicController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Mostrar todos los cómics.
+     *
+     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -20,7 +23,7 @@ class ComicController extends Controller
             $apiUrl = "https://openlibrary.org/api/books?bibkeys=ISBN:$isbn&format=json&jscmd=data";
             
             $response = Http::withOptions([
-                'verify' => false,  // Esto en windows me daba error de seguridad por el ssl asi que se desactiva
+                'verify' => false,  // Desactivar SSL en windows
             ])->get($apiUrl);
             $data = $response->json();
     
@@ -39,9 +42,10 @@ class ComicController extends Controller
         return view('comic.index', compact('comics'));
     }
 
-
     /**
-     * Show the form for creating a new resource.
+     * Mostrar el formulario para crear un nuevo cómic.
+     *
+     * @return \Illuminate\View\View
      */
     public function create()
     {
@@ -49,12 +53,15 @@ class ComicController extends Controller
         if (!Auth::check() || !Auth::user()->admin) {
             return redirect('/')->with('error', 'No tienes permisos de administrador.');
         }
-        //Se lo envío a la vista:
+
         return view('comic.create', compact('comics'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacenar un nuevo cómic en la base de datos.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -62,11 +69,11 @@ class ComicController extends Controller
             return redirect('/')->with('error', 'No tienes permisos de administrador.');
         }
         $request->validate([
-            'isbn'=>'required|string|min:3', 
+            'isbn'=>'required|string|min:3',
             'precio'=>'required|numeric|min:1',
             'stock'=> 'required|integer|min:1',
-            
         ]);
+
         $isbn = $request->input('isbn');
         $stock = $request->input('stock');
         $precio = $request->input('precio');
@@ -78,12 +85,12 @@ class ComicController extends Controller
             $comic->increment('stock', $stock);
             return redirect()->route('comics.create')
                 ->with('success', "Stock actualizado. Nuevo stock: {$comic->stock}");
-        } 
+        }
 
-        // Si no existe, obtener el título desde la API
+        // Obtener el título desde la API si no existe
         $apiUrl = "https://openlibrary.org/api/books?bibkeys=ISBN:{$isbn}&format=json&jscmd=data";
         $response = Http::withOptions([
-            'verify' => false,  // Esto en windows me daba error de seguridad por el ssl asi que se desactiva
+            'verify' => false,  // Desactivar SSL en windows
         ])->get($apiUrl);
         $data = $response->json();
 
@@ -94,11 +101,11 @@ class ComicController extends Controller
 
         $titulo = $data["ISBN:$isbn"]['title'] ?? 'Título Desconocido';
 
-        // Crear nuevo registro en la base de datos
+        // Crear nuevo cómic en la base de datos
         Comic::create([
             'isbn' => $isbn,
             'titulo' => $titulo,
-            'precio' => $precio, // Precio ingresado manualmente
+            'precio' => $precio,
             'stock' => $stock,
         ]);
 
@@ -106,33 +113,11 @@ class ComicController extends Controller
             ->with('success', "Cómic '{$titulo}' registrado con éxito. Stock: {$stock}");
     }
 
-
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
+     * Eliminar un cómic específico de la base de datos.
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
@@ -145,5 +130,4 @@ class ComicController extends Controller
     
         return redirect()->route('comics.index')->with('error', 'Cómic no encontrado');
     }
-    
 }

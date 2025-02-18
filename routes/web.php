@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BookController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ComicController;
+
 
 //Para que se muestre la pagina de index nada mas entrar a la ip.
 Route::get('/', [ComicController::class, 'index']);

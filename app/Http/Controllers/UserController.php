@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Hash;
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
@@ -12,20 +12,29 @@ use App\Models\Comic;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Mostrar todos los usuarios.
+     *
+     * @return \Illuminate\View\View
      */
     public function index()
     {
-      // Solo un admin puede acceder
-      if (!Auth::check() || !Auth::user()->admin) {
-        return redirect('/')->with('error', 'No tienes permisos de administrador.');
+        // Solo un admin puede acceder
+        if (!Auth::check() || !Auth::user()->admin) {
+            return redirect('/')->with('error', 'No tienes permisos de administrador.');
+        }
+
+        // Obtener todos los usuarios menos el admin actual
+        $users = User::where('id', '!=', Auth::id())->get();
+
+        return view('user.index', compact('users'));
     }
 
-    // Obtener todos los usuarios menos el admin actual
-    $users = User::where('id', '!=', Auth::id())->get();
-
-    return view('user.index', compact('users'));
-    }
+    /**
+     * Cambiar el rol de administrador de un usuario.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function toggleAdmin($id)
     {
         // Solo un admin puede modificar roles
@@ -40,24 +49,32 @@ class UserController extends Controller
 
         return redirect()->route('user.index')->with('success', 'Rol de usuario actualizado.');
     }
-    
 
     /**
-     * Show the form for creating a new resource.
+     * Mostrar el formulario para crear un nuevo usuario.
+     *
+     * @return \Illuminate\View\View
      */
     public function create()
     {
-
-    return view('user.create');
-
+        return view('user.create');
     }
+
+    /**
+     * Mostrar el formulario de login.
+     *
+     * @return \Illuminate\View\View
+     */
     public function login()
     {
         return view('user.login');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacenar un nuevo usuario en la base de datos.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -78,10 +95,10 @@ class UserController extends Controller
             'tlf' => 'nullable|string',
             'metodo_pago' => 'nullable|string',
         ]);
-    
+
         // Obtener ubicación del usuario
         $location = $this->getUserLocation();
-    
+
         // Crear usuario con los datos de geolocalización
         $user = User::create([
             'name' => $request->name,
@@ -92,44 +109,17 @@ class UserController extends Controller
             'pais' => $location['pais'],  // Se obtiene de la API
             'moneda' => $location['moneda'],
         ]);
-    
+
         Auth::login($user);
-    
+
         return redirect()->route('login')->with('success', 'Registro exitoso. Ubicación guardada.');
     }
-    
-
     /**
-     * Display the specified resource.
+     * Autenticar a un usuario.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
     public function authenticate(Request $request)
     {
         $credentials = $request->validate([
@@ -145,6 +135,12 @@ class UserController extends Controller
         return back()->withErrors(['email' => 'Las credenciales proporcionadas no son correctas.']);
     }
 
+    /**
+     * Cerrar sesión de un usuario.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function logout(Request $request)
     {
         Auth::logout();
@@ -153,6 +149,12 @@ class UserController extends Controller
         
         return redirect('/comics')->with('success', 'Sesión cerrada correctamente.');
     }
+
+    /**
+     * Obtener la ubicación del usuario.
+     *
+     * @return array
+     */
     public function getUserLocation()
     {
        // $ip = request()->ip(); // Obtener la IP del usuario
@@ -178,9 +180,4 @@ class UserController extends Controller
             ];
         }
     }
-    
-
-    
-
-    
 }

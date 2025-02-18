@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Support\Facades\Http;    
@@ -8,14 +9,23 @@ use App\Http\Controllers\Controller;
 
 class ComicApiController extends Controller
 {
-    // Obtener todos los cómics (API)
+    /**
+     * Obtener todos los cómics (API).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index()
     {
         $comics = Comic::all();
         return response()->json($comics);
     }
 
-    // Obtener un cómic por ID (API)
+    /**
+     * Obtener un cómic por ID (API).
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show($id)
     {
         $comic = Comic::find($id);
@@ -27,7 +37,12 @@ class ComicApiController extends Controller
         return response()->json($comic);
     }
 
-    // Crear un nuevo cómic (API)
+    /**
+     * Crear un nuevo cómic (API).
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -70,7 +85,13 @@ class ComicApiController extends Controller
         return response()->json($newComic, 201);
     }
 
-    // Actualizar un cómic (API)
+    /**
+     * Actualizar un cómic (API).
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request, $id)
     {
         $comic = Comic::find($id);
@@ -84,7 +105,12 @@ class ComicApiController extends Controller
         return response()->json($comic);
     }
 
-    // Eliminar un cómic (API)
+    /**
+     * Eliminar un cómic (API).
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy($id)
     {
         $comic = Comic::find($id);
